@@ -1,0 +1,11 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+rootProject.name = 'microservices-root'
+include 'task-service'
+include 'notification-service'
+include 'task-service'

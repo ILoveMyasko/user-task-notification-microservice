@@ -1,0 +1,68 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.3' apply false
+    id 'io.spring.dependency-management' version '1.1.7' apply false
+}
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    group 'org.main'
+    version '0.0.1-SNAPSHOT'
+    java.sourceCompatibility(JavaVersion.VERSION_21)
+
+    repositories {
+        mavenCentral()
+    }
+    task('helloevery').doLast {
+        println "im $project.name"
+    }
+    dependencies {
+        implementation 'org.springframework.boot:spring-boot-starter-web'
+        implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+        implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+    }
+}
+//java {
+//	toolchain {
+//		languageVersion = JavaLanguageVersion.of(21)
+//	}
+//}
+
+
+//dependencies {
+//	implementation 'org.springframework.boot:spring-boot-starter-web'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+//	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+//	implementation 'org.springframework.boot:spring-boot-starter-cache'
+//
+//	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+//	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+//
+//	compileOnly 'org.projectlombok:lombok'
+//	annotationProcessor 'org.projectlombok:lombok'
+//
+//	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+//
+//	//runtimeOnly 'org.springframework.boot:spring-boot-docker-compose' //it autoruns compose when i build? can be useful for booting postgres with the app?
+//	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+//	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
+//	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+//	//flyway db migrations
+//	implementation 'org.flywaydb:flyway-core' //flyway migrate
+//	implementation 'org.flywaydb:flyway-database-postgresql'
+//	//postgres
+//	runtimeOnly 'org.postgresql:postgresql'
+//
+//	//kafka
+//	implementation 'org.springframework.kafka:spring-kafka'
+//
+//}
+//
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}

@@ -12,6 +12,7 @@ import java.time.ZonedDateTime;
 
 
 @Getter
+@Setter
 @Entity
 @NoArgsConstructor //mandatory for SpringJPA
 @Table(name = "tasks")

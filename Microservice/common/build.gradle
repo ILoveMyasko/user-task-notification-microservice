@@ -1,0 +1,9 @@
+plugins {
+    id 'java-library'
+}
+bootJar { //no main function
+    enabled = false
+}
+jar {
+    enabled = true
+}

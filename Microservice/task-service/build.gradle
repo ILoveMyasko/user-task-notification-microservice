@@ -1,0 +1,25 @@
+plugins {
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+tasks.named('bootRun') {
+    jvmArgs = [
+            '-Xms256m', // Initial heap
+            '-Xmx512m'  // Max heap
+    ]
+}
+dependencies {
+    implementation project(':common') //common data (for events)
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+    runtimeOnly 'org.postgresql:postgresql' //postgresDB
+    implementation 'org.flywaydb:flyway-core' //flyway DB migration
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor' //why?
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-cache'
+    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
+}
+test {
+    useJUnitPlatform()
+}

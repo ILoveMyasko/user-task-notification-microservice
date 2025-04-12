@@ -24,47 +24,7 @@ subprojects {
         implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
     }
 }
-tasks.register('runAllServices') {
-    dependsOn ':user-service:bootRun',
-            ':task-service:bootRun',
-            ':notification-service:bootRun'
-}
-//java {
-//	toolchain {
-//		languageVersion = JavaLanguageVersion.of(21)
-//	}
-//}
 
 
-//dependencies {
-//	implementation 'org.springframework.boot:spring-boot-starter-web'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-//	implementation 'org.springframework.boot:spring-boot-starter-cache'
-//
-//	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-//	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
-//
-//	compileOnly 'org.projectlombok:lombok'
-//	annotationProcessor 'org.projectlombok:lombok'
-//
-//	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-//
-//	//runtimeOnly 'org.springframework.boot:spring-boot-docker-compose' //it autoruns compose when i build? can be useful for booting postgres with the app?
-//	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-//	implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
-//	implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-//	//flyway db migrations
-//	implementation 'org.flywaydb:flyway-core' //flyway migrate
-//	implementation 'org.flywaydb:flyway-database-postgresql'
-//	//postgres
-//	runtimeOnly 'org.postgresql:postgresql'
-//
-//	//kafka
-//	implementation 'org.springframework.kafka:spring-kafka'
-//
-//}
-//
-//tasks.named('test') {
-//    useJUnitPlatform()
-//}
+
+

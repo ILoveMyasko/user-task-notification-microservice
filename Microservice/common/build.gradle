@@ -6,4 +6,5 @@ bootJar { //no main function
 }
 jar {
     enabled = true
+    archiveFileName='common.jar'
 }

@@ -1,9 +1,7 @@
 package main.controller;
 
 import jakarta.validation.Valid;
-import main.exceptions.TaskAlreadyExistsException;
-import main.exceptions.TaskCreationErrorException;
-import main.exceptions.TaskNotFoundException;
+import main.exceptions.*;
 import main.model.Task;
 import main.service.TaskService;
 import org.springframework.http.HttpStatus;
@@ -53,14 +51,21 @@ public class TaskController {
     public ResponseEntity<String> handleTaskAlreadyExistsException(TaskAlreadyExistsException e) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
     }
-
     @ExceptionHandler(TaskNotFoundException.class)
     public ResponseEntity<String> handleTaskNotFoundException(TaskNotFoundException e) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
-    @ExceptionHandler(TaskCreationErrorException.class)
-    public ResponseEntity<String> handleTTaskCreationErrorException(TaskCreationErrorException e) {
+    @ExceptionHandler(TaskCreationUserNotExistsException.class)
+    public ResponseEntity<String> handleTaskCreationErrorException(TaskCreationUserNotExistsException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());// a stub
+    }
+    @ExceptionHandler(TaskCreationUserServiceUnavailableException.class)
+    public ResponseEntity<String> handleTaskCreationUserServiceUnavailableException(TaskCreationUserServiceUnavailableException e) {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());// a stub
+    }
+    @ExceptionHandler(TaskSerializationException.class)
+    public ResponseEntity<String> handleTaskSerializationException(TaskSerializationException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());// a stub
     }
 }
 

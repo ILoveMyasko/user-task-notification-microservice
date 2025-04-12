@@ -16,9 +16,6 @@ subprojects {
     repositories {
         mavenCentral()
     }
-    task('helloevery').doLast {
-        println "im $project.name"
-    }
     dependencies {
         implementation 'org.springframework.boot:spring-boot-starter-web'
         implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
@@ -26,6 +23,11 @@ subprojects {
         annotationProcessor 'org.projectlombok:lombok'
         implementation 'jakarta.validation:jakarta.validation-api:3.0.2'
     }
+}
+tasks.register('runAllServices') {
+    dependsOn ':user-service:bootRun',
+            ':task-service:bootRun',
+            ':notification-service:bootRun'
 }
 //java {
 //	toolchain {

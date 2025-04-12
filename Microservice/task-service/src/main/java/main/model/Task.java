@@ -18,19 +18,19 @@ import java.time.ZonedDateTime;
 public class Task implements Serializable  { //serializable simple but not the best solution?
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    long taskId;
+    private long taskId;
     @Positive @NotNull //can't use foreign keys tables are in different databases
-    long userId;
+    private long userId;
     @NotEmpty @Column(length = 100)
-    String taskTitle;
+    private String taskTitle;
     @NotEmpty @Column(length = 255)
-    String taskDescription;
+    private String taskDescription;
     @Column
-    final ZonedDateTime createdAt = ZonedDateTime.now(); // do I want to remove default now? since postgres can autogen it
+    private final ZonedDateTime createdAt = ZonedDateTime.now(); // do I want to remove default now? since postgres can autogen it
     @NotNull @Column
-    ZonedDateTime expiresAt;
+    private ZonedDateTime expiresAt;
     @Column
-    boolean isCompleted = false; //need to implement update request to change that. Or some other logic
+    private boolean isCompleted = false; //need to implement update request to change that. Or some other logic
 
     @AssertTrue(message = "expiresAt must be after createdAt") //No message is shown, but the check works
     private boolean isExpiresAtValid() {

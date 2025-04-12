@@ -1,11 +1,11 @@
 package main.service;
-import main.exceptions.TaskCreationErrorException;
-import main.kafkaData.TaskEvent;
-import main.kafkaData.TaskEventTypeEnum;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import main.exceptions.*;
 import main.model.Task;
-import main.exceptions.TaskAlreadyExistsException;
-import main.exceptions.TaskNotFoundException;
 import main.repository.TaskRepository;
+import org.main.CommonEvents.TaskEvent; //from common lib
+import org.main.CommonEvents.TaskEventTypeEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -17,6 +17,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
 import java.time.ZonedDateTime;
 import java.util.List;
 
@@ -36,26 +37,27 @@ public class TaskServiceImpl implements TaskService {
         this.restTemplate = restTemplate;
     }
 
-
+    //so many exceptions
     @Caching(
-            put = @CachePut(value = "tasks", key = "#result.taskId"),
-            evict = @CacheEvict(value = "userTasks", key = "#result.userId")//TODO: check later
+            put = @CachePut(value = "tasks", key = "#result.taskId"), //working with database generation
+            evict = @CacheEvict(value = "userTasks", key = "#result.userId") // or task?
     )
     public Task createTask(Task task) {
         try {
-            restTemplate.getForEntity(userServiceBaseUrl + "/users/" + task.getUserId(), String.class);
+            restTemplate.getForEntity(userServiceBaseUrl + "/users/" + task.getUserId(), String.class); //hardcoded and looks unsafe
         } catch (RuntimeException ex) {
             if (ex.getClass() == HttpClientErrorException.NotFound.class) {
-                throw new TaskCreationErrorException("User with ID " + task.getUserId() + " does not exist."); //TODO need more than one exception anyway
+                throw new TaskCreationUserNotExistsException(ex.getMessage());
             } else {
-                throw new TaskCreationErrorException("Error communicating with UserService: " + ex.getMessage());
+                throw new TaskCreationUserServiceUnavailableException("Error communicating with User service: " + ex.getMessage());
             }
         }
-        if (taskRepository.existsById(task.getTaskId())) { // TODO: use cache?
+        if (taskRepository.existsById(task.getTaskId())) { //TODO deal with caching
             throw new TaskAlreadyExistsException(task.getTaskId());
         }
         Task savedTask = taskRepository.save(task);
-        kafkaTemplate.send("task-events", new TaskEvent(TaskEventTypeEnum.CREATE, savedTask.getTaskId(), savedTask.getUserId()));
+        TaskEvent taskEventCreated = new TaskEvent(TaskEventTypeEnum.CREATE, savedTask.getTaskId(), savedTask.getUserId());
+        kafkaTemplate.send("task-events", taskEventCreated);
         return savedTask;
     }
 
@@ -70,26 +72,28 @@ public class TaskServiceImpl implements TaskService {
         return taskRepository.findByUserId(id);
     }
 
-    //no caching
     public List<Task> getAllTasks() {
         return taskRepository.findAll();
     }
 
     @Caching(
             evict = {
-                    @CacheEvict(value = "tasks", key = "#result.taskId"), //TODO check keys
+                    @CacheEvict(value = "tasks", key = "#id"),
                     @CacheEvict(value = "userTasks", key = "#result.userId")
             })
     public Task deleteTaskById(long id) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         taskRepository.deleteById(id);
+        TaskEvent taskEventDeleted = new TaskEvent(TaskEventTypeEnum.DELETE, task.getTaskId(), task.getUserId());
+        kafkaTemplate.send("task-events", taskEventDeleted);
         return task;
     }
 
     @Async
     @Scheduled(initialDelay = 30000, fixedDelay = 60000)
     void deleteOverdueTasks() {
-        List<Task> overdueTasks = taskRepository.findByDueDateBeforeAndCompletedFalse(ZonedDateTime.now());
+        System.out.println("Deleting overdue tasks...");
+        List<Task> overdueTasks = taskRepository.findOverdueTasksAndCompletedFalse(ZonedDateTime.now());
         if (!overdueTasks.isEmpty()) {
             taskRepository.deleteAll(overdueTasks);
 

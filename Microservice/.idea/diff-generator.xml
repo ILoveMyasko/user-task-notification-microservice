@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DiffGenerationConfig">
+    <option name="snapshotDb" value="false" />
+    <option name="snapshotModelValue" value="Microservice.notification-service.main:Microservice.notification-service.main" />
+    <option name="sourceDbValue" value="46ab40d8-8d7d-4e92-8e6b-8184d688382d" />
+    <option name="sourceDiffType" value="DB" />
+    <option name="sourceModelValue" value="Microservice.user-service.main:Microservice.user-service.main" />
+    <option name="targetDbValue" value="79421a2b-b39a-4760-b02a-6af009412e82" />
+  </component>
+</project>

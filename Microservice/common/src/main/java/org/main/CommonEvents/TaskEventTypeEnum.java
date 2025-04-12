@@ -1,4 +1,4 @@
-package main.kafkaData;
+package org.main.CommonEvents;
 
 public enum TaskEventTypeEnum {
     CREATE,

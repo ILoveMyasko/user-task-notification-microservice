@@ -20,7 +20,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
 
-
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' //health checks
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 test {
     useJUnitPlatform()

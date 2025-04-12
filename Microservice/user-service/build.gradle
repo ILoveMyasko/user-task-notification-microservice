@@ -2,7 +2,7 @@ plugins {
     id 'org.springframework.boot'
     id 'io.spring.dependency-management'
 }
-tasks.named('bootRun') {
+tasks.named('bootRun') {//running out of memory without it
     jvmArgs = [
             '-Xms256m', // Initial heap
             '-Xmx512m'  // Max heap
@@ -13,14 +13,8 @@ dependencies {
     implementation 'org.flywaydb:flyway-core' //flyway DB migration
     implementation 'org.flywaydb:flyway-database-postgresql'
 
-    //implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    // implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-//    implementation 'org.springframework.boot:spring-boot-starter-web'
-//    implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-//    compileOnly 'org.projectlombok:lombok'
-//    annotationProcessor 'org.projectlombok:lombok'
-//    testImplementation 'org.junit.jupiter:junit-jupiter'
-//    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator' //health checks
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 test {

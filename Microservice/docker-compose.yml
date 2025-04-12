@@ -99,7 +99,32 @@ services:
       - kafka-data:/bitnami/kafka
     depends_on:
       - postgres-microservice
+
+  prometheus:
+    image: bitnami/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  # Конфиг
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    depends_on:
+      - user-service
+      - task-service
+      - notification-service
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+
+
 volumes:
   postgres-data:
   redis-data:
   kafka-data:
+  grafana_data:

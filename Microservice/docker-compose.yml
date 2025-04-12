@@ -1,0 +1,105 @@
+services:
+  user-service:
+    build:
+      context: .
+      dockerfile: user-service/Dockerfile
+    container_name: user-service
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-microservice:5432/users
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_URL: jdbc:postgresql://postgres-microservice:5432/users
+      SERVER_PORT: 8080
+      #SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092 #not being used atm
+    depends_on:
+      - postgres-microservice
+      - redis-cache-microservice
+      - kafka-microservice
+  task-service:
+    build:
+      context: .
+      dockerfile: task-service/Dockerfile
+    container_name: task-service
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-microservice:5432/tasks
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_DATA_REDIS_HOST: redis-cache-microservice
+      SPRING_DATA_REDIS_PORT: 6379
+      SPRING_CACHE_REDIS_TIME-TO-LIVE: 60000
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-microservice:9092
+      SERVER_PORT: 8081
+      USER_SERVICE_BASE_URL: http://user-service:8080
+    depends_on:
+      - postgres-microservice
+      - redis-cache-microservice
+      - kafka-microservice
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: notification-service/Dockerfile
+    container_name: notification-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-microservice:5432/notifications
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka-microservice:9092
+      SERVER_PORT: 8082
+      USER_SERVICE_BASE_URL: http://user-service:8080
+      TASK_SERVICE_BASE_URL: http://task-service:8081
+    depends_on:
+      - postgres-microservice
+      - kafka-microservice
+
+  postgres-microservice:
+    image: postgres:17
+    container_name: postgres-microservice
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init-databases.sql
+
+  redis-cache-microservice:
+    image: redis:latest
+    container_name: redis-cache-microservice
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+
+  kafka-microservice:
+    image: bitnami/kafka:latest
+    container_name: kafka-microservice
+    ports:
+      - "9092:9092"
+    environment:
+      - KAFKA_CFG_PROCESS_ROLES=controller,broker #one node for control and broking
+      - KAFKA_CFG_NODE_ID=1 #first and only node in kafka cluster
+      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka-microservice:9093
+      - KAFKA_CFG_LISTENERS=PLAINTEXT://:9092,CONTROLLER://:9093
+      - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://kafka-microservice:9092  # Internal DNS
+      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=PLAINTEXT #added last
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+      - KAFKA_LOG4J_LOGGERS=kraft=ERROR,controller=ERROR,state=ERROR,metadata=ERROR #spits out too much logs without it
+      - KAFKA_LOG4J_ROOT_LOGLEVEL=WARN
+    volumes:
+      - kafka-data:/bitnami/kafka
+    depends_on:
+      - postgres-microservice
+volumes:
+  postgres-data:
+  redis-data:
+  kafka-data:

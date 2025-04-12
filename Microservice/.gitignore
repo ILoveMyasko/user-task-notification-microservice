@@ -1,13 +1,14 @@
 HELP.md
-.gradle/
-build
+.gradle
+build/
 !gradle/wrapper/gradle-wrapper.jar
 #!**/src/main/**/build/
 #!**/src/test/**/build/
 ###careful
+**/build/libs/*.jar
 .idea/
 ### exclude builds###
-#./user-service/build/
+**/user-service/build/
 #./task-service/build/
 #./notification-service/build/
 #./common/build/

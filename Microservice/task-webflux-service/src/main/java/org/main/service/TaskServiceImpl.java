@@ -42,7 +42,7 @@ public class TaskServiceImpl implements TaskService {
         this.webClient = userServiceWebClient;
     }
 
-    //so many org.main.exceptions
+    //TODO cache doesnt work
     @Caching(
             put = @CachePut(value = "tasks", key = "#result.taskId"), //working with database generation
             evict = @CacheEvict(value = "userTasks", key = "#result.userId") // or task?
@@ -53,17 +53,13 @@ public class TaskServiceImpl implements TaskService {
                 .uri("/users/{userId}", task.getUserId()) // base path in config
                 .retrieve()
                 .onStatus(HttpStatus.NOT_FOUND::equals, // Predicate for 404
-                        clientResponse -> clientResponse.bodyToMono(String.class)
-                                .defaultIfEmpty("[User Service Body Empty on 404]") //TODO check and remove
-                                .flatMap(body -> Mono.error(
-                                        new TaskCreationUserNotExistsException("User service returned 404. Body: " + body))))
+                        response ->
+                                Mono.error(new TaskCreationUserNotExistsException("User service returned 404 for user ID: " + task.getUserId())))
                 .onStatus(
                         HttpStatusCode::isError,
-                        clientResponse -> clientResponse.bodyToMono(String.class)
-                                .defaultIfEmpty("[User Service Body Empty on Error]")
-                                .flatMap(body -> Mono.error(
+                        response -> Mono.error(
                                         new TaskCreationUserServiceUnavailableException(
-                                                "User service error: Status " + clientResponse.statusCode() + ", Body: " + body))))
+                                                "User service error: Status " + response.statusCode())))
                 .bodyToMono(Void.class) // kinda like else here, emits onComplete. necessary to release the connection
                 .onErrorResume(WebClientRequestException.class,
                         ex -> Mono.error(new TaskCreationUserServiceUnavailableException("Cannot connect to User service: " + ex.getMessage()))

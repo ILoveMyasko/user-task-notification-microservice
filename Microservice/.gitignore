@@ -8,13 +8,13 @@ build/
 **/build/libs/*.jar
 .idea/
 ### exclude builds###
-**/user-service/build/
-#./task-service/build/
-#./notification-service/build/
+**/user-org.main.service/build/
+#./task-org.main.service/build/
+#./notification-org.main.service/build/
 #./common/build/
-#./user-service/.gradle/
-#./task-service/.gradle/
-#./notification-service/.gradle/
+#./user-org.main.service/.gradle/
+#./task-org.main.service/.gradle/
+#./notification-org.main.service/.gradle/
 #./common/.gradle/
 ### Logs ###
 *.log

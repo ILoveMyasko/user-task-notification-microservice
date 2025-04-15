@@ -8,24 +8,22 @@ tasks.named('bootRun') {
             '-Xmx512m'  // Max heap
     ]
 }
+
 dependencies {
-    implementation project(':common') //common data (for events)
+    implementation project(':common')
+    testImplementation platform('org.junit:junit-bom:5.10.0')
+    testImplementation 'org.junit.jupiter:junit-jupiter'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
     runtimeOnly 'org.postgresql:postgresql' //postgresDB
     implementation 'org.flywaydb:flyway-core' //flyway DB migration
     implementation 'org.flywaydb:flyway-database-postgresql'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor' //why?
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-
     implementation 'org.springframework.boot:spring-boot-starter-actuator' //health checks
     implementation 'io.micrometer:micrometer-registry-prometheus'
-
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-}
-test {
-    useJUnitPlatform()
 }

@@ -9,6 +9,9 @@ tasks.named('bootRun') {
     ]
 }
 dependencies {
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation project(':common') //common lib
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
@@ -22,6 +25,8 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator' //healthchecks
     implementation 'io.micrometer:micrometer-registry-prometheus'
+
+
 }
 
 test {

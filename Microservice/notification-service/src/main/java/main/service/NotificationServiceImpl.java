@@ -62,7 +62,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (ex.getClass() == HttpClientErrorException.NotFound.class) {
                 throw new RequestedEntityNotFoundException(ex.getMessage());
             } else {
-                throw new ServiceRequestFailedException("Error communicating with Task service: " + ex.getMessage());
+                throw new ServiceRequestFailedException("Error communicating with Task org.main.service: " + ex.getMessage());
             }
         }
     }
@@ -74,7 +74,7 @@ public class NotificationServiceImpl implements NotificationService {
             if (ex.getClass() == HttpClientErrorException.NotFound.class) {
                 throw new RequestedEntityNotFoundException(ex.getMessage());
             } else {
-                throw new ServiceRequestFailedException("Error communicating with User service: " + ex.getMessage());
+                throw new ServiceRequestFailedException("Error communicating with User org.main.service: " + ex.getMessage());
             }
         }
     }

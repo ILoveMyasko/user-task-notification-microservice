@@ -37,7 +37,7 @@ public class TaskServiceImpl implements TaskService {
         this.restTemplate = restTemplate;
     }
 
-    //so many exceptions
+    //so many org.main.exceptions
     @Caching(
             put = @CachePut(value = "tasks", key = "#result.taskId"), //working with database generation
             evict = @CacheEvict(value = "userTasks", key = "#result.userId") // or task?
@@ -49,7 +49,7 @@ public class TaskServiceImpl implements TaskService {
             if (ex.getClass() == HttpClientErrorException.NotFound.class) {
                 throw new TaskCreationUserNotExistsException(ex.getMessage());
             } else {
-                throw new TaskCreationUserServiceUnavailableException("Error communicating with User service: " + ex.getMessage());
+                throw new TaskCreationUserServiceUnavailableException("Error communicating with User org.main.service: " + ex.getMessage());
             }
         }
         if (taskRepository.existsById(task.getTaskId())) { //TODO deal with caching

@@ -17,13 +17,15 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-r2dbc'
     implementation 'org.springframework.kafka:spring-kafka'
     testImplementation 'org.springframework.kafka:spring-kafka-test'
-    runtimeOnly 'org.postgresql:postgresql' //postgresDB
-    implementation 'org.flywaydb:flyway-core' //flyway DB migration
-    implementation 'org.flywaydb:flyway-database-postgresql'
-    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.postgresql:r2dbc-postgresql'
+    implementation 'io.r2dbc:r2dbc-pool'
+    //annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-cache'
     implementation 'org.hibernate.validator:hibernate-validator:8.0.1.Final'
-    implementation 'org.springframework.boot:spring-boot-starter-actuator' //health checks
-    implementation 'io.micrometer:micrometer-registry-prometheus'
+    //implementation 'org.flywaydb:flyway-core' //flyway DB migration
+    //implementation 'org.flywaydb:flyway-database-postgresql'
+    //implementation 'org.springframework.boot:spring-boot-starter-actuator' //health checks
+    //implementation 'io.micrometer:micrometer-registry-prometheus'
 }

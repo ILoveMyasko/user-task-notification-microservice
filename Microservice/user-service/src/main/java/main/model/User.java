@@ -15,7 +15,7 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 @Table(name = "users")
 @Getter
 public class User {
-    @Id @GeneratedValue(strategy = IDENTITY)
+    @Id @GeneratedValue(strategy = IDENTITY) //TODO logs say Failed to set up a Bean Validation provider: jakarta.validation.NoProviderFoundException: Unable to create a Configuration, because no Jakarta Bean Validation provider could be found. Add a provider like Hibernate Validator (RI) to your classpath.
     private long userId;
     @Column(length = 50,nullable = false) @Size(min = 1, max = 50)
     private String name;

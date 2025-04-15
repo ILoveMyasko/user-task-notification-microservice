@@ -39,17 +39,21 @@ public class TaskController {
 
     @PostMapping
     public Mono<ResponseEntity<Task>> createTask(@RequestBody @Valid Task task) {
+//        return taskService.createTask(task)
+//                .map(savedTask -> ResponseEntity
+//                        .status(HttpStatus.CREATED) // Use 201 CREATED for successful creation
+//                        .body(savedTask)) // Inside map, savedTask is the actual Task object
+//                .onErrorResume(TaskAlreadyExistsException.class, // Add error handling!
+//                        e -> Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).build())) // Example error handling
+//                .onErrorResume(TaskCreationUserNotExistsException.class,
+//                        e -> Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build())) // Example error handling
+//                // Add other necessary error handling (e.g., validation, service unavailable)
+//                .onErrorResume(Exception.class, // Fallback
+//                        e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
         return taskService.createTask(task)
                 .map(savedTask -> ResponseEntity
-                        .status(HttpStatus.CREATED) // Use 201 CREATED for successful creation
-                        .body(savedTask)) // Inside map, savedTask is the actual Task object
-                .onErrorResume(TaskAlreadyExistsException.class, // Add error handling!
-                        e -> Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).build())) // Example error handling
-                .onErrorResume(TaskCreationUserNotExistsException.class,
-                        e -> Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).build())) // Example error handling
-                // Add other necessary error handling (e.g., validation, service unavailable)
-                .onErrorResume(Exception.class, // Fallback
-                        e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
+                        .status(HttpStatus.CREATED) //201
+                        .body(savedTask));
     }
 
 //    @DeleteMapping("/{id}")
@@ -57,26 +61,27 @@ public class TaskController {
 //        return Mono.just(ok(taskService.deleteTaskById(tId)));
 //    }
 
-    //TODO return Mono?
+    //TODO return Mono? Actually can just be removed
+    //actually task cant exist because we auto-generate ids in db.
     @ExceptionHandler(TaskAlreadyExistsException.class)
-    public ResponseEntity<String> handleTaskAlreadyExistsException(TaskAlreadyExistsException e) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
+    public Mono<ResponseEntity<String>> handleTaskAlreadyExistsException(TaskAlreadyExistsException e) {
+        return Mono.just(ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage()));
     }
     @ExceptionHandler(TaskNotFoundException.class)
-    public ResponseEntity<String> handleTaskNotFoundException(TaskNotFoundException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    public Mono<ResponseEntity<String>> handleTaskNotFoundException(TaskNotFoundException e) {
+        return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()));
     }
     @ExceptionHandler(TaskCreationUserNotExistsException.class)
-    public ResponseEntity<String> handleTaskCreationErrorException(TaskCreationUserNotExistsException e) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());// a stub
+    public Mono<ResponseEntity<String>> handleTaskCreationErrorException(TaskCreationUserNotExistsException e) {
+        return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage()));
     }
     @ExceptionHandler(TaskCreationUserServiceUnavailableException.class)
-    public ResponseEntity<String> handleTaskCreationUserServiceUnavailableException(TaskCreationUserServiceUnavailableException e) {
-        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage());// a stub
+    public Mono<ResponseEntity<String>> handleTaskCreationUserServiceUnavailableException(TaskCreationUserServiceUnavailableException e) {
+        return Mono.just(ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(e.getMessage()));// a stub
     }
     @ExceptionHandler(TaskSerializationException.class)
-    public ResponseEntity<String> handleTaskSerializationException(TaskSerializationException e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());// a stub
+    public Mono<ResponseEntity<String>> handleTaskSerializationException(TaskSerializationException e) {
+        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage()));// a stub
     }
 }
 

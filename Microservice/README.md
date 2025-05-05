@@ -1,8 +1,4 @@
-To build:
-```
-./gradlew build
-```
-To run use docker-compose:
+To run:
 ```
 docker-compose up --build
 ```

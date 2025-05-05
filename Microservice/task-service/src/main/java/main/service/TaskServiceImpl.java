@@ -49,15 +49,17 @@ public class TaskServiceImpl implements TaskService {
             if (ex.getClass() == HttpClientErrorException.NotFound.class) {
                 throw new TaskCreationUserNotExistsException(ex.getMessage());
             } else {
-                throw new TaskCreationUserServiceUnavailableException("Error communicating with User org.main.service: " + ex.getMessage());
+                throw new TaskCreationUserServiceUnavailableException("Error communicating with User service: " + ex.getMessage());
             }
         }
         if (taskRepository.existsById(task.getTaskId())) { //TODO deal with caching
             throw new TaskAlreadyExistsException(task.getTaskId());
         }
-        Task savedTask = taskRepository.save(task);
+        // do we save or make kafka do it?
+        Task savedTask = taskRepository.save(task); // TODO service can be unavailable
         TaskEvent taskEventCreated = new TaskEvent(TaskEventTypeEnum.CREATE, savedTask.getTaskId(), savedTask.getUserId());
-        kafkaTemplate.send("task-events", taskEventCreated);
+        //actually won't allow me to post anything if kafka is down
+        kafkaTemplate.send("task-events", taskEventCreated); // if kafka is not up we do what? make it transactional?
         return savedTask;
     }
 
@@ -85,12 +87,12 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         taskRepository.deleteById(id);
         TaskEvent taskEventDeleted = new TaskEvent(TaskEventTypeEnum.DELETE, task.getTaskId(), task.getUserId());
-        kafkaTemplate.send("task-events", taskEventDeleted);
+        kafkaTemplate.send("task-events", taskEventDeleted);//.get or we might get in trouble. .whenComplete?
         return task;
     }
 
     @Async
-    @Scheduled(initialDelay = 30000, fixedDelay = 60000)
+    @Scheduled(initialDelay = 60000, fixedDelay = 60000)
     void deleteOverdueTasks() {
         System.out.println("Deleting overdue tasks...");
         List<Task> overdueTasks = taskRepository.findOverdueTasksAndCompletedFalse(ZonedDateTime.now());

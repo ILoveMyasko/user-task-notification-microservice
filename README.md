@@ -3,4 +3,4 @@ This repository contains a **microservice SpringBoot RESTful web application** s
 * Microservice communications are implemented using both **Kafka** (notifications are published when a new task is created) and HTTP calls (taskService requests information about existing users from userService).
 * TaskService uses **Redis** for caching.
 * **Prometheus&Grafana** are implemented for monitoring and health checks.
-* **Docker-compose** is provided for running all microservices in two commands (requires building with gradle).
+* **Docker-compose** is provided for building and running all microservices in one command.
